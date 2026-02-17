@@ -1,0 +1,143 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  name          String
+  avatar        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  ownedBoards   Board[]        @relation("BoardOwner")
+  boardMembers  BoardMember[]
+  assignedTasks Task[]         @relation("TaskAssignee")
+  createdTasks  Task[]         @relation("TaskCreator")
+  activities    Activity[]
+}
+
+model Board {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  background  String   @default("#6366f1")
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  owner       User           @relation("BoardOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     BoardMember[]
+  lists       List[]
+  activities  Activity[]
+  
+  @@index([ownerId])
+}
+
+model BoardMember {
+  id        String   @id @default(uuid())
+  boardId   String
+  userId    String
+  role      String   @default("member") // owner, admin, member
+  joinedAt  DateTime @default(now())
+  
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([boardId, userId])
+  @@index([boardId])
+  @@index([userId])
+}
+
+model List {
+  id        String   @id @default(uuid())
+  boardId   String
+  name      String
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+  
+  @@index([boardId])
+  @@index([boardId, position])
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  listId      String
+  title       String
+  description String?
+  position    Int
+  dueDate     DateTime?
+  priority    String?   // low, medium, high
+  createdById String
+  assigneeId  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  list        List      @relation(fields: [listId], references: [id], onDelete: Cascade)
+  createdBy   User      @relation("TaskCreator", fields: [createdById], references: [id])
+  assignee    User?     @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  labels      TaskLabel[]
+  activities  Activity[]
+  
+  @@index([listId])
+  @@index([listId, position])
+  @@index([assigneeId])
+  @@index([createdById])
+}
+
+model Label {
+  id        String      @id @default(uuid())
+  name      String
+  color     String
+  boardId   String?
+  createdAt DateTime    @default(now())
+  
+  tasks     TaskLabel[]
+  
+  @@index([boardId])
+}
+
+model TaskLabel {
+  taskId    String
+  labelId   String
+  createdAt DateTime @default(now())
+  
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  label     Label    @relation(fields: [labelId], references: [id], onDelete: Cascade)
+  
+  @@id([taskId, labelId])
+  @@index([taskId])
+  @@index([labelId])
+}
+
+model Activity {
+  id        String   @id @default(uuid())
+  boardId   String
+  userId    String
+  taskId    String?
+  action    String   // created, updated, moved, deleted, assigned, member_added, etc.
+  metadata  Json?    // Additional context
+  createdAt DateTime @default(now())
+  
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id])
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  
+  @@index([boardId, createdAt(sort: Desc)])
+  @@index([taskId])
+}
