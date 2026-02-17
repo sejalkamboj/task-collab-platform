@@ -12,7 +12,7 @@ export function SocketProvider({ children }) {
     if (!user) { setSocket(null); return }
 
     const token = localStorage.getItem('accessToken')
-    const s = io('http://localhost:3000', {
+    const s = io('https://taskcollab-api.onrender.com', {
       auth: { token },
       transports: ['websocket', 'polling'],
     })
