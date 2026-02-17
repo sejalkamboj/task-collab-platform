@@ -257,6 +257,12 @@ Full schema is in `backend/prisma/schema.prisma`.
 - CORS restricted to frontend origin
 - Rate limiting on all API routes (100 requests per 15 minutes)
 
+## Deployment
+
+See `docs/DEPLOYMENT.md` for full production deployment instructions covering VPS setup, environment configuration, Nginx reverse proxy, and database backups.
+
+---
+
 ---
 
 
