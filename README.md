@@ -100,8 +100,7 @@ task-collab-platform/
 └── docs/
     ├── ARCHITECTURE.md
     ├── API.md
-    ├── SETUP.md
-    └── DEPLOYMENT.md
+    
 ```
 
 ---
@@ -260,9 +259,5 @@ Full schema is in `backend/prisma/schema.prisma`.
 
 ---
 
-## Deployment
 
-See `docs/DEPLOYMENT.md` for full production deployment instructions covering VPS setup, environment configuration, Nginx reverse proxy, and database backups.
-
----
 
