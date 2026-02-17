@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const API_BASE = 'http://localhost:3000/api/v1'
+const API_BASE = 'https://taskcollab-api.onrender.com'
 
 async function request(endpoint, options = {}) {
   const token = localStorage.getItem('accessToken')
