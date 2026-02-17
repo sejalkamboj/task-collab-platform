@@ -1,8 +1,8 @@
-# Task Collaboration Platform 🚀
+# Task Collaboration Platform 
 
 A production-ready, real-time task collaboration platform similar to Trello/Notion with drag-and-drop, WebSocket sync, and modern UI/UX.
 
-## 🎯 Features
+## Features
 
 ### Core Functionality
 - ✅ User authentication (signup/login with JWT)
@@ -23,7 +23,7 @@ A production-ready, real-time task collaboration platform similar to Trello/Noti
 - **Drag & Drop**: @dnd-kit library
 - **Styling**: Tailwind CSS + Framer Motion animations
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 task-collab-platform/
@@ -56,7 +56,7 @@ task-collab-platform/
     └── DEPLOYMENT.md      # Deployment guide
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - Node.js 18+ and npm
@@ -125,7 +125,7 @@ npm run dev
 4. Add lists and tasks
 5. Try drag-and-drop!
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 ### Backend Architecture
 
