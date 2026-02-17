@@ -1,441 +1,268 @@
-# Task Collaboration Platform 
+# Task Collaboration Platform
 
-A production-ready, real-time task collaboration platform similar to Trello/Notion with drag-and-drop, WebSocket sync, and modern UI/UX.
+A real-time task management and collaboration platform built with React, Node.js, PostgreSQL, and WebSockets. Teams can create boards, manage tasks across lists, assign members, and see changes instantly across all connected clients.
+
+---
 
 ## Features
 
-### Core Functionality
-- ✅ User authentication (signup/login with JWT)
-- ✅ Create multiple boards with lists and tasks
-- ✅ Drag-and-drop tasks across lists (real-time)
-- ✅ Assign users to tasks
-- ✅ Real-time updates via WebSocket
-- ✅ Activity history tracking
-- ✅ Task search functionality
-- ✅ Task priorities and due dates
+- User authentication with JWT (signup, login, token refresh)
+- Create and manage project boards with custom background colors
+- Add multiple lists per board and reorder them
+- Create, edit, delete, and drag-and-drop tasks between lists
+- Assign tasks to board members with priority levels and due dates
+- Invite members to boards by email and manage their roles
+- Real-time updates across all connected users via WebSockets
+- Activity history log per board
+- Search and pagination on task queries
 
-### Technical Highlights
-- **Frontend**: React 18 + TypeScript + Vite
-- **Backend**: Node.js + Express + TypeScript
-- **Database**: PostgreSQL with proper indexing
-- **Real-time**: Socket.IO for bidirectional communication
-- **State Management**: Zustand (lightweight alternative to Redux)
-- **Drag & Drop**: @dnd-kit library
-- **Styling**: Tailwind CSS + Framer Motion animations
+---
+
+## Tech Stack
+
+**Frontend**
+- React 18
+- Vite
+- @hello-pangea/dnd (drag and drop)
+- Socket.io client
+- date-fns
+
+**Backend**
+- Node.js with Express
+- PostgreSQL
+- Prisma ORM
+- Socket.io
+- JSON Web Tokens (JWT)
+- Bcrypt
+- Zod (validation)
+
+---
 
 ## Project Structure
 
 ```
 task-collab-platform/
+│
 ├── backend/
+│   ├── prisma/
+│   │   └── schema.prisma           # Database schema
 │   ├── src/
-│   │   ├── controllers/      # Request handlers
-│   │   ├── services/         # Business logic
-│   │   ├── routes/           # API routes
-│   │   ├── middleware/       # Auth, validation
-│   │   ├── db/              # Database connection & schema
-│   │   ├── socket/          # WebSocket handlers
-│   │   ├── types/           # TypeScript types
-│   │   └── server.ts        # Express app entry
-│   ├── package.json
-│   └── tsconfig.json
+│   │   ├── controllers/
+│   │   │   ├── activityController.js
+│   │   │   ├── authController.js
+│   │   │   ├── boardController.js
+│   │   │   ├── listController.js
+│   │   │   └── taskController.js
+│   │   ├── middleware/
+│   │   │   ├── auth.js             # JWT authentication middleware
+│   │   │   └── errorHandler.js
+│   │   ├── routes/
+│   │   │   ├── activity.js
+│   │   │   ├── auth.js
+│   │   │   ├── boards.js
+│   │   │   ├── lists.js
+│   │   │   ├── tasks.js
+│   │   │   └── users.js            # User search for member invite
+│   │   ├── socket/
+│   │   │   └── socketHandler.js    # WebSocket event handling
+│   │   ├── utils/
+│   │   │   ├── jwt.js
+│   │   │   └── validators.js       # Zod schemas
+│   │   ├── app.js                  # Express app setup
+│   │   └── server.js               # HTTP + WebSocket server entry
+│   ├── .env.example
+│   └── package.json
+│
 ├── frontend/
 │   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API & Socket services
-│   │   ├── store/          # Zustand state management
-│   │   ├── hooks/          # Custom React hooks
-│   │   ├── types/          # TypeScript types
-│   │   └── App.tsx         # Main app component
-│   ├── package.json
-│   └── vite.config.ts
+│   │   ├── components/
+│   │   │   ├── MemberManager.jsx   # Invite and manage board members
+│   │   │   ├── Sidebar.jsx
+│   │   │   └── Toast.jsx
+│   │   ├── contexts/
+│   │   │   ├── AuthContext.jsx
+│   │   │   └── SocketContext.jsx
+│   │   ├── hooks/
+│   │   │   └── useToast.js
+│   │   ├── pages/
+│   │   │   ├── AuthPage.jsx        # Login and signup
+│   │   │   ├── BoardView.jsx       # Board with drag-and-drop lists
+│   │   │   └── Dashboard.jsx       # Board listing and creation
+│   │   ├── services/
+│   │   │   └── api.js              # All API calls, single port config
+│   │   ├── App.jsx
+│   │   ├── index.css
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── vite.config.js
+│   └── package.json
+│
 └── docs/
-    ├── ARCHITECTURE.md     # System architecture
-    ├── API.md             # API documentation
-    └── DEPLOYMENT.md      # Deployment guide
+    ├── ARCHITECTURE.md
+    ├── API.md
+    ├── SETUP.md
+    └── DEPLOYMENT.md
 ```
-
-## Quick Start
-
-### Prerequisites
-- Node.js 18+ and npm
-- PostgreSQL 14+
-- Git
-
-### 1. Database Setup
-
-```bash
-# Install PostgreSQL (Ubuntu/Debian)
-sudo apt update
-sudo apt install postgresql postgresql-contrib
-
-# Start PostgreSQL
-sudo systemctl start postgresql
-
-# Create database and user
-sudo -u postgres psql
-CREATE DATABASE taskcollab;
-CREATE USER taskuser WITH ENCRYPTED PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE taskcollab TO taskuser;
-\q
-
-# Run migrations
-cd backend
-cat src/db/schema.sql | psql -U taskuser -d taskcollab
-```
-
-### 2. Backend Setup
-
-```bash
-cd backend
-
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your database credentials
-
-# Start development server
-npm run dev
-
-# Server runs on http://localhost:3001
-```
-
-### 3. Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# App runs on http://localhost:3000
-```
-
-### 4. Test the Application
-
-1. Open http://localhost:3000
-2. Register a new account
-3. Create a board
-4. Add lists and tasks
-5. Try drag-and-drop!
-
-## Architecture Overview
-
-### Backend Architecture
-
-```
-┌─────────────────────────────────────────┐
-│           Client Requests               │
-└─────────────┬───────────────────────────┘
-              │
-              ▼
-┌─────────────────────────────────────────┐
-│    Express Server (Port 3001)           │
-│    ├── CORS Middleware                  │
-│    ├── JWT Authentication               │
-│    └── JSON Body Parser                 │
-└─────────────┬───────────────────────────┘
-              │
-      ┌───────┴────────┐
-      │                │
-      ▼                ▼
-┌───────────┐    ┌─────────────┐
-│ REST API  │    │  Socket.IO  │
-│ /api/*    │    │  Real-time  │
-└─────┬─────┘    └──────┬──────┘
-      │                  │
-      │   ┌──────────────┤
-      │   │              │
-      ▼   ▼              ▼
-┌──────────────┐  ┌─────────────┐
-│ Controllers  │  │  Socket      │
-│              │  │  Handlers    │
-└──────┬───────┘  └──────┬──────┘
-       │                  │
-       ▼                  │
-┌──────────────┐         │
-│  Services    │         │
-│  - Auth      │         │
-│  - Board     │         │
-│  - List      │         │
-│  - Task      │         │
-│  - Activity  │         │
-└──────┬───────┘         │
-       │                 │
-       ▼                 │
-┌──────────────┐        │
-│ PostgreSQL   │◄───────┘
-│ Database     │
-└──────────────┘
-```
-
-### Frontend Architecture
-
-```
-┌─────────────────────────────────────────┐
-│            React App (SPA)              │
-└─────────────┬───────────────────────────┘
-              │
-      ┌───────┴────────┐
-      │                │
-      ▼                ▼
-┌───────────┐    ┌─────────────┐
-│   Pages   │    │ Components  │
-│ - Login   │    │ - TaskCard  │
-│ - Board   │    │ - ListCol   │
-│ - Dash    │    │ - Navbar    │
-└─────┬─────┘    └──────┬──────┘
-      │                  │
-      │   ┌──────────────┤
-      │   │              │
-      ▼   ▼              ▼
-┌──────────────┐  ┌─────────────┐
-│   Services   │  │   Store     │
-│ - API (REST) │  │  (Zustand)  │
-│ - Socket.IO  │  │  - Auth     │
-└──────┬───────┘  │  - Board    │
-       │          └─────────────┘
-       │
-       ▼
-┌──────────────┐
-│   Backend    │
-│  API + WS    │
-└──────────────┘
-```
-
-### Real-Time Sync Strategy
-
-1. **User Action** → Component calls API service
-2. **API Call** → Updates server database
-3. **Server Response** → Returns updated data
-4. **Local Update** → Updates Zustand store
-5. **Socket Emit** → Broadcasts change to room
-6. **Other Clients** → Receive socket event
-7. **Auto Update** → Update their local store
-
-```javascript
-// Example: Creating a task
-1. User clicks "Add Task"
-2. TaskCard → taskAPI.create()
-3. Server → INSERT INTO tasks
-4. Server → Returns new task
-5. Client → useBoardStore.addTask()
-6. Client → socket.emit('task-created')
-7. Other users → socket.on('task-created')
-8. Other users → useBoardStore.addTask()
-```
-
-## 📡 API Documentation
-
-### Authentication Endpoints
-
-```
-POST /api/auth/register
-POST /api/auth/login
-GET  /api/auth/profile (protected)
-```
-
-### Board Endpoints
-
-```
-POST   /api/boards (protected)
-GET    /api/boards (protected)
-GET    /api/boards/:boardId (protected)
-PUT    /api/boards/:boardId (protected)
-DELETE /api/boards/:boardId (protected)
-POST   /api/boards/:boardId/members (protected)
-```
-
-### List Endpoints
-
-```
-POST   /api/boards/:boardId/lists (protected)
-PUT    /api/lists/:listId (protected)
-DELETE /api/lists/:listId (protected)
-```
-
-### Task Endpoints
-
-```
-POST   /api/lists/:listId/tasks (protected)
-PUT    /api/tasks/:taskId (protected)
-DELETE /api/tasks/:taskId (protected)
-POST   /api/tasks/:taskId/assign (protected)
-DELETE /api/tasks/:taskId/unassign (protected)
-GET    /api/boards/:boardId/tasks/search (protected)
-```
-
-### Activity Endpoints
-
-```
-GET /api/boards/:boardId/activities (protected)
-```
-
-## 🧪 Testing
-
-### Backend Tests
-
-```bash
-cd backend
-npm test
-```
-
-### Frontend Tests
-
-```bash
-cd frontend
-npm test
-```
-
-## 🔐 Security Features
-
-- ✅ Password hashing with bcrypt
-- ✅ JWT-based authentication
-- ✅ Protected API routes
-- ✅ Socket.IO authentication
-- ✅ SQL injection prevention (parameterized queries)
-- ✅ CORS configuration
-- ✅ Input validation
-
-## 📊 Database Schema
-
-See `backend/src/db/schema.sql` for the complete schema.
-
-**Key Tables:**
-- `users` - User accounts
-- `boards` - Project boards
-- `board_members` - Board access control
-- `lists` - Columns within boards
-- `tasks` - Individual tasks
-- `task_assignees` - Task assignments
-- `activities` - Audit trail
-
-**Relationships:**
-- One-to-Many: User → Boards
-- Many-to-Many: Users ↔ Boards (via board_members)
-- Many-to-Many: Users ↔ Tasks (via task_assignees)
-- One-to-Many: Board → Lists → Tasks
-
-## ⚡ Performance Optimizations
-
-1. **Database Indexes** on frequently queried columns
-2. **Connection Pooling** for PostgreSQL
-3. **Zustand** for minimal re-renders
-4. **React.memo** for expensive components
-5. **Optimistic Updates** before API confirmation
-6. **Lazy Loading** for routes
-7. **WebSocket** rooms for targeted updates
-
-## 🚀 Deployment
-
-### Backend Deployment (Heroku/Railway)
-
-```bash
-# Build
-npm run build
-
-# Start production
-npm start
-```
-
-### Frontend Deployment (Vercel/Netlify)
-
-```bash
-# Build
-npm run build
-
-# Preview
-npm run preview
-```
-
-### Environment Variables
-
-**Backend:**
-```
-DATABASE_URL=postgresql://...
-JWT_SECRET=your-secret-key
-PORT=3001
-NODE_ENV=production
-ALLOWED_ORIGINS=https://your-frontend.com
-```
-
-**Frontend:**
-```
-VITE_API_URL=https://your-backend.com/api
-VITE_SOCKET_URL=https://your-backend.com
-```
-
-## 🛠️ Tech Stack Details
-
-### Frontend
-- **React 18** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **Tailwind CSS** - Utility-first CSS
-- **Framer Motion** - Animations
-- **@dnd-kit** - Drag and drop
-- **Zustand** - State management
-- **Socket.IO Client** - WebSocket
-- **Axios** - HTTP client
-- **React Router** - Routing
-
-### Backend
-- **Node.js** - Runtime
-- **Express** - Web framework
-- **TypeScript** - Type safety
-- **PostgreSQL** - Database
-- **Socket.IO** - WebSocket server
-- **JWT** - Authentication
-- **Bcrypt** - Password hashing
-- **Zod** - Schema validation
-
-## 📈 Scalability Considerations
-
-1. **Horizontal Scaling**
-   - Stateless API servers
-   - Redis for Socket.IO adapter (multi-server)
-   - Load balancer distribution
-
-2. **Database Scaling**
-   - Read replicas for queries
-   - Partitioning for large tables
-   - Caching layer (Redis)
-
-3. **Real-time Optimization**
-   - Socket.IO Redis adapter
-   - Room-based broadcasting
-   - Message throttling
-
-4. **Frontend Optimization**
-   - Code splitting
-   - Asset optimization
-   - CDN for static files
-
-## 👥 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
-## 📝 License
-
-MIT License - See LICENSE file for details
-
-## 🤝 Support
-
-For issues or questions:
-- Open a GitHub issue
-- Check existing documentation
-- Review the code comments
 
 ---
 
-Built with ❤️ using modern web technologies
+## Getting Started
+
+### Prerequisites
+
+- Node.js v18 or higher
+- PostgreSQL v14 or higher
+- Git
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/task-collab-platform.git
+cd task-collab-platform
+```
+
+### 2. Backend setup
+
+```bash
+cd backend
+npm install
+cp .env.example .env
+```
+
+Edit `.env` with your database credentials:
+
+```env
+DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/taskcollab?schema=public"
+JWT_SECRET="your-secret-key"
+JWT_REFRESH_SECRET="your-refresh-secret-key"
+PORT=3001
+NODE_ENV=development
+FRONTEND_URL="http://localhost:5173"
+```
+
+Create the database, run migrations, and start the server:
+
+```bash
+psql -U postgres -c "CREATE DATABASE taskcollab;"
+npm run prisma:generate
+npm run prisma:migrate
+npm run dev
+```
+
+Backend runs at `http://localhost:3001`
+
+### 3. Frontend setup
+
+Open a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs at `http://localhost:5173`
+
+---
+
+## Environment Variables
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string |
+| `JWT_SECRET` | Secret key for access tokens |
+| `JWT_REFRESH_SECRET` | Secret key for refresh tokens |
+| `PORT` | Backend server port (default 3001) |
+| `NODE_ENV` | development or production |
+| `FRONTEND_URL` | Allowed CORS origin |
+
+---
+
+## API Overview
+
+All endpoints are prefixed with `/api/v1`.
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | /auth/signup | Create account |
+| POST | /auth/login | Login |
+| GET | /boards | Get all boards for current user |
+| POST | /boards | Create a board |
+| GET | /boards/:id | Get board with lists and tasks |
+| POST | /boards/:id/members | Add member to board |
+| DELETE | /boards/:id/members/:userId | Remove member |
+| POST | /lists | Create a list |
+| PATCH | /lists/:id | Update a list |
+| DELETE | /lists/:id | Delete a list |
+| POST | /tasks | Create a task |
+| PATCH | /tasks/:id | Update a task |
+| PATCH | /tasks/:id/move | Move task to another list |
+| DELETE | /tasks/:id | Delete a task |
+| GET | /users/search?email= | Search users by email for inviting |
+| GET | /activity/board/:id | Get board activity history |
+
+---
+
+## WebSocket Events
+
+The server uses Socket.io rooms named `board:{boardId}`.
+
+**Client to server**
+
+| Event | Description |
+|---|---|
+| join:board | Subscribe to a board room |
+| leave:board | Unsubscribe from a board room |
+| task:create | Notify others of new task |
+| task:update | Notify others of task update |
+| task:move | Notify others of task movement |
+| task:delete | Notify others of task deletion |
+| list:create | Notify others of new list |
+| list:delete | Notify others of list deletion |
+
+**Server to client**
+
+| Event | Description |
+|---|---|
+| task:created | A new task was created |
+| task:updated | A task was updated |
+| task:moved | A task was moved between lists |
+| task:deleted | A task was deleted |
+| list:created | A new list was added |
+| list:deleted | A list was removed |
+| user:joined | A user joined the board |
+| user:left | A user left the board |
+
+---
+
+## Database Schema
+
+The database has 7 tables: User, Board, BoardMember, List, Task, Label, TaskLabel, and Activity.
+
+Key relationships:
+- A user can own multiple boards and be a member of others
+- A board has multiple lists, each with ordered tasks
+- Tasks can be assigned to any board member
+- Every action is logged in the Activity table
+
+Full schema is in `backend/prisma/schema.prisma`.
+
+---
+
+## Security
+
+- Passwords hashed with bcrypt
+- JWT authentication on all protected routes
+- Input validation with Zod on every endpoint
+- SQL injection protection via Prisma ORM
+- CORS restricted to frontend origin
+- Rate limiting on all API routes (100 requests per 15 minutes)
+
+---
+
+## Deployment
+
+See `docs/DEPLOYMENT.md` for full production deployment instructions covering VPS setup, environment configuration, Nginx reverse proxy, and database backups.
+
+---
+
