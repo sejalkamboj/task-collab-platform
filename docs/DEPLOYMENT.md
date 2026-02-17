@@ -9,8 +9,8 @@ This guide covers deploying the Task Collaboration Platform using Neon (database
 | Service | Purpose | URL after deploy |
 |---|---|---|
 | Neon | PostgreSQL database | managed, no public URL |
-| Render | Node.js backend + WebSocket | https://your-app.onrender.com |
-| Vercel | React frontend | https://your-app.vercel.app |
+| Render | Node.js backend + WebSocket | https://taskcollab-api-yt8x.onrender.com |
+| Vercel | React frontend | https://task-collab-platform-woad.vercel.app/ |
 
 ---
 
